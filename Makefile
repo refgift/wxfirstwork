@@ -1,5 +1,5 @@
 .cpp.o:
-	c++ -c $< `wx-config --cxxflags` -g
+	c++ -c $< `wx-config --cxxflags` -O
 
 wxfirstwork: wxfirstwork.o
 	c++ $< `wx-config core base adv --libs` -o $@

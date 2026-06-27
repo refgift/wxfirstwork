@@ -39,7 +39,8 @@ public:
 wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
-    MyDialog *dialog = new MyDialog();
+	static MyDialog *dialog;
+	dialog= new MyDialog();
     finished =true;
     dialog->Show();
 
@@ -80,7 +81,7 @@ long rnd(void)
 {
         static unsigned long a;
         a=0;
-        asm("1: pause; rdrand %0; jae 1b":"=r"(a));
+        asm("1: pause; rdrandq %0; jae 1b":"=r"(a));
         RET(a);
 }
 void worker(wxTextCtrl  * statusbar) {
@@ -88,16 +89,16 @@ void worker(wxTextCtrl  * statusbar) {
     static int a=0, b=0, c=0;
     static int state=0; // 0-2: watch 268 seq ; 3-5: watch 186 seq
     statusbar->SetValue("Thread Started");
-    statusbar->Refresh();
+	statusbar->GetParent()->Refresh();
     pauseAsm();
 loop:
-            int value = reduce(abs(rnd()));
+            int value = reduce(rnd());
             ADV(state,0,value,2){ state=1; a=2; }
             ADV(state,1,value,6){ state=2; b=6; }
             ADV(state,2,value,8){
                     c=8;
                     statusbar->SetValue("CANDLESTICK");
-		    statusbar->Refresh();
+		    statusbar->GetParent()->Refresh();
                     pauseAsm( );
                     state=3;
                     a=b=c=0;
@@ -107,7 +108,7 @@ loop:
             ADV(state,5,value,6){
                     c=6;
                     statusbar->SetValue("ENDANGERMENT");
-		    statusbar->Refresh();
+		    statusbar->GetParent()->Refresh();
                     pauseAsm () ;
                     transmit(IRON);
                     pause1s();
