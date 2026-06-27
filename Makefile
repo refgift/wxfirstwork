@@ -1,8 +1,8 @@
 .cpp.o:
-	g++ -c $< `wx-config --cxxflags` -g
+	c++ -c $< `wx-config --cxxflags` -g
 
 wxfirstwork: wxfirstwork.o
-	g++ $< `wx-config core base adv --libs` -o $@
+	c++ $< `wx-config core base adv --libs` -o $@
 
 clean:
 	rm *.o

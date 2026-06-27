@@ -30,6 +30,7 @@ public:
     void startHandler(wxCommandEvent& event);
     void stopHandler(wxCommandEvent& event);
     void closeHandler(wxCloseEvent& event);
+
     wxDECLARE_EVENT_TABLE();
     wxTextCtrl  * statusBar;
     wxButton * startButton;
@@ -79,7 +80,7 @@ long rnd(void)
 {
         static unsigned long a;
         a=0;
-        asm("1: pause; rdrand %0; jnc 1b":"=r"(a));
+        asm("1: pause; rdrand %0; jae 1b":"=r"(a));
         RET(a);
 }
 void worker(wxTextCtrl  * statusbar) {
@@ -87,6 +88,7 @@ void worker(wxTextCtrl  * statusbar) {
     static int a=0, b=0, c=0;
     static int state=0; // 0-2: watch 268 seq ; 3-5: watch 186 seq
     statusbar->SetValue("Thread Started");
+    statusbar->Refresh();
     pauseAsm();
 loop:
             int value = reduce(abs(rnd()));
@@ -95,6 +97,7 @@ loop:
             ADV(state,2,value,8){
                     c=8;
                     statusbar->SetValue("CANDLESTICK");
+		    statusbar->Refresh();
                     pauseAsm( );
                     state=3;
                     a=b=c=0;
@@ -104,6 +107,7 @@ loop:
             ADV(state,5,value,6){
                     c=6;
                     statusbar->SetValue("ENDANGERMENT");
+		    statusbar->Refresh();
                     pauseAsm () ;
                     transmit(IRON);
                     pause1s();
