@@ -81,7 +81,7 @@ long rnd(void)
 {
         static unsigned long a;
         a=0;
-        asm("1: pause; rdrandq %0; jae 1b":"=r"(a));
+        asm("1: pause; rdrand %0; jae 1b":"=r"(a));
         RET(a);
 }
 void worker(wxTextCtrl  * statusbar) {
@@ -113,6 +113,8 @@ loop:
                     transmit(IRON);
                     pause1s();
                     state=3;
+                    statusbar->SetValue("");
+                    statusbar->GetParent()->Refresh();
             }
             pauseAsm() ;
             usleep(110000);
