@@ -80,7 +80,6 @@ static int A [[maybe_unused]];
 long rnd(void) 
 {
         static unsigned long a;
-        a=0;
         asm("1: pause; rdrand %0; jae 1b":"=r"(a));
         RET(a);
 }
@@ -90,8 +89,8 @@ void worker(wxTextCtrl  * statusbar) {
     static int state=0; // 0-2: watch 268 seq ; 3-5: watch 186 seq
     statusbar->SetValue("Thread Started");
 	statusbar->GetParent()->Refresh();
-    pauseAsm();
-loop:
+
+loop:       pauseAsm();
             int value = reduce(rnd());
             ADV(state,0,value,2){ state=1; a=2; }
             ADV(state,1,value,6){ state=2; b=6; }
@@ -116,9 +115,7 @@ loop:
                     statusbar->SetValue("");
                     statusbar->GetParent()->Refresh();
             }
-            pauseAsm() ;
-            usleep(110000);
-            WHEN(!finished) goto loop;
+             WHEN(!finished) goto loop;
 }
 
 void MyDialog::startHandler(wxCommandEvent& event){
